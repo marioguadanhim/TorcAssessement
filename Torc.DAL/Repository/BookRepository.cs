@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,11 +26,14 @@ namespace Torc.DAL.Repository
             return await DbSet.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Book>> GetBookPerformance()
+        public async Task<IEnumerable<Book>> GetBooks(string searchBy, string searchValue)
         {
             using (var conn = Db.Database.GetDbConnection())
             {
-                return await conn.QueryAsync<Book>("SELECT * FROM books");
+                var books = await conn.QueryAsync<Book>("SELECT * FROM books WHERE " + searchBy + " LIKE '%' + @SearchValue + '%'",
+                    new { SearchValue = searchValue });
+
+                return books;
             }
         }
     }

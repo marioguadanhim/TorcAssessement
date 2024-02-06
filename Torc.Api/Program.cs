@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Torc.BLL.Services;
+using Torc.DAL.EntityFramework;
+using Torc.DAL.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-#region DI Registray
+#region DI Container
 
 builder.Services.AddTransient<BookServices>();
+builder.Services.AddTransient<BookRepository>();
+builder.Services.AddTransient<BookLibraryContext>();
 
 #endregion
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Torc.BLL.Services;
 using Torc.BLL.ViewModel;
+using Torc.DAL.EntityFramework;
 
 namespace Torc.Api.Controllers
 {
@@ -17,16 +18,16 @@ namespace Torc.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetBook([FromQuery] BookSearchViewModel bookSearch)
+        public async Task<IActionResult> GetBook([FromQuery] BookSearchViewModel bookSearch)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _bookServices.Search(bookSearch);
+            var books = await _bookServices.Search(bookSearch);
 
-            return Ok();
+            return Ok(books);
         }
     }
 }
