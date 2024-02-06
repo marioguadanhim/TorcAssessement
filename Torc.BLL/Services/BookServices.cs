@@ -21,12 +21,15 @@ namespace Torc.BLL.Services
             _bookRepository = bookRepository;
         }
 
-        public async Task<IEnumerable<Book>> Search(BookSearchViewModel bookSearchViewModel)
+        public async Task<List<BookSearchResultViewModel>> Search(BookSearchViewModel bookSearchViewModel)
         {
             ValidateSearch(bookSearchViewModel.SearchBy);
 
             var books = await _bookRepository.GetBooks(bookSearchViewModel.SearchBy, bookSearchViewModel.SearchValue);
-            return books;
+
+            var bookSearchResult = MapEntityToViewModel(books);
+
+            return bookSearchResult;
         }
 
 
@@ -43,6 +46,28 @@ namespace Torc.BLL.Services
             }
 
             throw new Exception("Invalid Search");
+        }
+
+        private List<BookSearchResultViewModel> MapEntityToViewModel(IEnumerable<Book> books)
+        {
+            var bookSearchResult = new List<BookSearchResultViewModel>();
+            foreach (Book book in books)
+            {
+
+                bookSearchResult.Add(new BookSearchResultViewModel()
+                {
+                    BookTitle = book.title,
+                    Publisher = "Publish was not informed in SQL script?",
+                    Authors = book.first_name + " " + book.last_name,
+                    Type = book.type,
+                    ISBN = Convert.ToInt64(book.isbn),
+                    Category = book.category,
+                    AvailableCopies = book.copies_in_use + "/" + book.total_copies
+                });
+
+            }
+
+            return bookSearchResult;
         }
 
 
